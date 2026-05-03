@@ -26,7 +26,13 @@ def analyze_emotion(text):
         json={"inputs": text}
     )
     result = response.json()
-    return result[0][0]['label']
+    print("HF result:", result)  # temporary debug
+    if isinstance(result, list) and len(result) > 0:
+        if isinstance(result[0], list):
+            return result[0][0]['label']
+        else:
+            return result[0]['label']
+    return "neutral"
 
 @app.get("/")
 def home():
