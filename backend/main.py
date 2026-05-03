@@ -20,7 +20,7 @@ app.add_middleware(
 
 def analyze_emotion(text):
     response = requests.post(
-        "https://api-inference.huggingface.co/models/j-hartmann/emotion-english-distilroberta-base",
+        "https://router.huggingface.co/hf-inference/models/j-hartmann/emotion-english-distilroberta-base",
         headers={"Authorization": f"Bearer {HF_TOKEN}"},
         json={"inputs": text}
     )
