@@ -1,3 +1,4 @@
+const API_URL = import.meta.env.VITE_API_URL
 import { useState, useEffect } from "react";
 
 function App() {
@@ -13,7 +14,7 @@ function App() {
   const [updateMessage, setUpdateMessage] = useState("");
 
   const handleCreate = async () => {
-    const response = await fetch("http://127.0.0.1:8000/create-entry", {
+    const response = await fetch(`${API_URL}/create-entry`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ title: title, content: content }),
@@ -25,7 +26,7 @@ function App() {
   };
 
   const fetchEntries = async () => {
-    const response = await fetch("http://127.0.0.1:8000/entries");
+    const response = await fetch(`${API_URL}/entries`);
     const data = await response.json();
     setEntries(data.entries);
   };
@@ -35,7 +36,7 @@ function App() {
   }, []);
 
   const handleDelete = async () => {
-    const response = await fetch(`http://127.0.0.1:8000/delete-entry/${deleteTitle}`, {
+    const response = await fetch(`${API_URL}/delete-entry/${deleteTitle}`, {
       method: "DELETE",
     });
     const data = await response.json();
@@ -45,7 +46,7 @@ function App() {
   };
 
   const handleUpdate = async () => {
-    const response = await fetch(`http://127.0.0.1:8000/update-entry/${updateTitle}?new_content=${updateContent}`, {
+    const response = await fetch(`${API_URL}/update-entry/${updateTitle}?new_content=${updateContent}`, {
       method: "PUT",
     });
     const data = await response.json();
