@@ -12,8 +12,12 @@ function App() {
   const [updateTitle, setUpdateTitle] = useState("");
   const [updateContent, setUpdateContent] = useState("");
   const [updateMessage, setUpdateMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false);
 
   const handleCreate = async () => {
+    setIsSubmitting(true);
     const response = await fetch(`${API_URL}/create-entry`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -23,12 +27,15 @@ function App() {
     setCreateMessage("Entry created! Emotion detected: " + data.emotion);
     setTitle("");
     setContent("");
+    setIsSubmitting(false);
   };
 
   const fetchEntries = async () => {
+    setIsLoading(true);
     const response = await fetch(`${API_URL}/entries`);
     const data = await response.json();
     setEntries(data.entries);
+    setIsLoading(false);
   };
 
   useEffect(() => {
@@ -46,6 +53,7 @@ function App() {
   };
 
   const handleUpdate = async () => {
+    setIsUpdating(true);
     const response = await fetch(`${API_URL}/update-entry/${updateTitle}?new_content=${updateContent}`, {
       method: "PUT",
     });
@@ -54,6 +62,7 @@ function App() {
     setUpdateTitle("");
     setUpdateContent("");
     fetchEntries();
+    setIsUpdating(false);
   };
 
   return (
@@ -95,7 +104,13 @@ function App() {
               onChange={(e) => setContent(e.target.value)}
             />
 
-            <button className="text-white w-3/5 border rounded-2xl border-[#39ff14] p-3 bg-[#2cfc0722] hover:cursor-pointer hover:bg-[#2cfc0762]" onClick={handleCreate}>Submit</button>
+            <button
+              className="text-white w-3/5 border rounded-2xl border-[#39ff14] p-3 bg-[#2cfc0722] hover:cursor-pointer hover:bg-[#2cfc0762]"
+              onClick={handleCreate}
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? "Submitting..." : "Submit"}
+            </button>
             {createMessage && <p className="text-[#39ff14]">{createMessage}</p>}
           </div>
         )}
@@ -105,7 +120,11 @@ function App() {
             <h2 className="font-['Courier_New',monospace] text-[#39ff14] [text-shadow:0_0_4px_#39ff14] border-b border-[#39ff14] font-semibold text-4xl mb-5">View Entries</h2>
             <button className="text-white w-2/5 border rounded-2xl border-[#39ff14] p-3 mb-10 bg-[#2cfc0722] hover:cursor-pointer hover:bg-[#2cfc0762]" onClick={fetchEntries}>Refresh</button>
 
-            {entries.length === 0 && <p className="text-[#39ff14]">No entries found.</p>}
+            {isLoading ? (
+              <p className="text-[#39ff14]">Loading entries...</p>
+            ) : entries.length === 0 ? (
+              <p className="text-[#39ff14]">No entries found.</p>
+            ) : null}
             {entries.map((entry, index) => (
               <div key={index} className="border bg-black border-gray-100 rounded-2xl mb-15 p-5 w-3/5 h-fit">
                 <h3 className="text-[#39ff14] border-b border-[#39ff14] text-2xl font-semibold text-center mb-4">{entry.title}</h3>
@@ -133,7 +152,13 @@ function App() {
               onChange={(e) => setUpdateContent(e.target.value)}
             />
 
-            <button className="text-white w-3/5 border rounded-2xl border-[#39ff14] p-3 bg-[#2cfc0722] hover:cursor-pointer hover:bg-[#2cfc0762]" onClick={handleUpdate}>Update</button>
+            <button
+              className="text-white w-3/5 border rounded-2xl border-[#39ff14] p-3 bg-[#2cfc0722] hover:cursor-pointer hover:bg-[#2cfc0762]"
+              onClick={handleUpdate}
+              disabled={isUpdating}
+            >
+              {isUpdating ? "Updating..." : "Update"}
+            </button>
             {updateMessage && <p className="text-[#39ff14]">{updateMessage}</p>}
           </div>
         )}
